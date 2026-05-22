@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms of Service - DownReels</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <div id="navbar"></div>
+    <main class="container" style="padding: 3rem 1.5rem;">
+        <h1>Terms of Service</h1>
+        <p>By using DownReels you agree to download only content you have the right to access. We are not responsible for copyright infringement.</p>
+    </main>
+    <div id="footer"></div>
+    <script src="assets/js/config.js"></script>
+    <script>
+        async function loadComponent(url, id) {
+            const res = await fetch(url);
+            if (res.ok) document.getElementById(id).innerHTML = await res.text();
+        }
+        loadComponent('components/navbar.html', 'navbar');
+        loadComponent('components/footer.html', 'footer');
+    </script>
+</body>
+</html>
