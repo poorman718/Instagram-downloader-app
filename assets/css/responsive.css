@@ -1,0 +1,13 @@
+@media (max-width: 768px) {
+    .hero { padding: 4rem 0 2rem; }
+    .input-group { flex-direction: column; }
+    .btn-download { width: 100%; justify-content: center; }
+    .results-grid { grid-template-columns: 1fr; }
+    .steps, .features-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 480px) {
+    .hero-title { font-size: 2rem; }
+    .downloader-card { padding: 1.5rem; }
+    .url-input { font-size: 0.9rem; }
+}
