@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About DownReels - Instagram Downloader</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <div id="navbar"></div>
+    <main class="container" style="padding: 3rem 1.5rem;">
+        <h1>About DownReels</h1>
+        <p>DownReels was created to make downloading Instagram content effortless. We provide a fast, secure, and free service with no watermarks. Our mission is to give everyone access to their favourite Instagram media offline, without complicated steps or hidden costs.</p>
+    </main>
+    <div id="footer"></div>
+    <script src="assets/js/config.js"></script>
+    <script>
+        async function loadComponent(url, id) {
+            const res = await fetch(url);
+            if (res.ok) document.getElementById(id).innerHTML = await res.text();
+        }
+        loadComponent('components/navbar.html', 'navbar');
+        loadComponent('components/footer.html', 'footer');
+    </script>
+</body>
+</html>
