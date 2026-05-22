@@ -580,3 +580,140 @@ footer {
 .toast-info {
     border-left: 4px solid #3b82f6;
 }
+
+/* ========== RESULTS ROW LAYOUT ========== */
+.result-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    transition: transform 0.2s ease;
+}
+.result-row:hover {
+    transform: translateY(-2px);
+}
+
+.result-preview {
+    position: relative;
+    width: 120px;
+    height: 90px;
+    border-radius: 10px;
+    overflow: hidden;
+    flex-shrink: 0;
+    background: #1a1a2e;
+}
+.result-thumb {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.result-thumb-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+}
+.result-duration {
+    position: absolute;
+    bottom: 4px;
+    right: 4px;
+    background: rgba(0,0,0,0.8);
+    color: #fff;
+    font-size: 0.65rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.result-info {
+    flex: 1;
+    min-width: 150px;
+}
+.result-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text);
+    cursor: pointer;
+    transition: color 0.2s;
+    line-height: 1.3;
+    margin-bottom: 0.3rem;
+}
+.result-title:hover {
+    color: var(--purple);
+}
+.result-creator {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+.creator-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--purple);
+}
+
+.result-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    flex-shrink: 0;
+}
+.btn-dl-row, .btn-new-link {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.6rem 1.1rem;
+    border: none;
+    border-radius: 25px;
+    font-weight: 600;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+.btn-dl-row {
+    background: linear-gradient(135deg, var(--purple), var(--pink));
+    color: #fff;
+    box-shadow: var(--glow);
+}
+.btn-dl-row:hover:not(:disabled) {
+    transform: scale(1.02);
+    box-shadow: 0 0 20px rgba(236,72,153,0.5);
+}
+.btn-dl-row:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+.btn-new-link {
+    background: rgba(255,255,255,0.05);
+    color: var(--text-secondary);
+    border: 1px solid rgba(255,255,255,0.1);
+}
+.btn-new-link:hover {
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+}
+
+/* Hide all sections when results are active */
+body.results-active .how-to,
+body.results-active .features,
+body.results-active .formats,
+body.results-active .faq,
+body.results-active .seo-content,
+body.results-active #cta {
+    display: none;
+}
+/* Also hide the hero title/subtitle when results shown, keep the downloader card */
+body.results-active .hero-title,
+body.results-active .hero-subtitle {
+    display: none;
+}
+body.results-active .hero {
+    padding-top: 2rem;
+    padding-bottom: 1rem;
+}
