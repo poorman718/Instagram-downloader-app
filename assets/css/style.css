@@ -567,3 +567,16 @@ footer {
         font-size: 0.85rem;
     }
 }
+
+/* Toast Types */
+.toast-success {
+    border-left: 4px solid #10b981;
+}
+
+.toast-error {
+    border-left: 4px solid #ef4444;
+}
+
+.toast-info {
+    border-left: 4px solid #3b82f6;
+}
