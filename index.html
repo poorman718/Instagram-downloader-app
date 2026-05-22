@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DownReels - Instagram Video & Reel Downloader | Free HD</title>
+    <meta name="description" content="Download Instagram Reels, Videos, Stories, Photos & Audio in HD. No watermark, no login, 100% free.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/responsive.css">
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⬇️</text></svg>">
+</head>
+<body>
+    <!-- Navbar placeholder -->
+    <div id="navbar"></div>
+
+    <main>
+        <!-- Hero / Downloader -->
+        <section class="hero" id="hero">
+            <div class="container">
+                <h1 class="hero-title">Download Instagram <span class="gradient-text">Reels & Videos</span> Instantly</h1>
+                <p class="hero-subtitle">Paste any Instagram link, hit download, and get HD media in seconds. No watermark, no login, completely free.</p>
+
+                <div class="downloader-card glass">
+                    <div class="input-group">
+                        <input type="url" id="urlInput" class="url-input" placeholder="Paste Instagram URL here..." autocomplete="off">
+                        <button id="downloadBtn" class="btn-download">
+                            <span>Download</span>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        </button>
+                    </div>
+                    <p class="error-msg" id="errorMsg"></p>
+                </div>
+
+                <!-- Loader -->
+                <div id="loader" class="loader-container" style="display:none;">
+                    <div class="spinner"></div>
+                    <p>Fetching media...</p>
+                </div>
+
+                <!-- Results -->
+                <div id="results" class="results-section" style="display:none;">
+                    <h2 class="section-heading">Your Download</h2>
+                    <div id="resultsGrid" class="results-grid"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- How To Use -->
+        <section class="how-to" id="howto">
+            <div class="container">
+                <div class="section-header">
+                    <span class="badge">📋 How It Works</span>
+                    <h2>Download in 3 Easy Steps</h2>
+                </div>
+                <div class="steps">
+                    <div class="step-card glass">
+                        <div class="step-number">01</div>
+                        <h3>Copy Instagram Link</h3>
+                        <p>Open Instagram, find the content you want, tap the share icon, and copy the link.</p>
+                    </div>
+                    <div class="step-card glass">
+                        <div class="step-number">02</div>
+                        <h3>Paste & Click Download</h3>
+                        <p>Paste the link into the box above and hit the Download button.</p>
+                    </div>
+                    <div class="step-card glass">
+                        <div class="step-number">03</div>
+                        <h3>Save to Your Device</h3>
+                        <p>Preview the media and download it in HD directly to your phone or computer.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features -->
+        <section class="features" id="features">
+            <div class="container">
+                <div class="section-header">
+                    <span class="badge">✨ Features</span>
+                    <h2>Why DownReels?</h2>
+                </div>
+                <div class="features-grid">
+                    <div class="feature-card glass">
+                        <div class="feature-icon">⚡</div>
+                        <h3>Lightning Fast</h3>
+                        <p>Downloads start in seconds with our optimised backend.</p>
+                    </div>
+                    <div class="feature-card glass">
+                        <div class="feature-icon">🎥</div>
+                        <h3>HD Quality</h3>
+                        <p>Get videos up to 1080p, crystal clear and uncompressed.</p>
+                    </div>
+                    <div class="feature-card glass">
+                        <div class="feature-icon">🔒</div>
+                        <h3>100% Secure</h3>
+                        <p>No account needed. We never store your data or downloads.</p>
+                    </div>
+                    <div class="feature-card glass">
+                        <div class="feature-icon">💧</div>
+                        <h3>No Watermark</h3>
+                        <p>Clean, watermark‑free files for reposting or archiving.</p>
+                    </div>
+                    <div class="feature-card glass">
+                        <div class="feature-icon">📱</div>
+                        <h3>All Devices</h3>
+                        <p>Works on iPhone, Android, tablet, laptop, and desktop.</p>
+                    </div>
+                    <div class="feature-card glass">
+                        <div class="feature-icon">🎵</div>
+                        <h3>Audio Extraction</h3>
+                        <p>Save music from reels and videos as MP3 when available.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Supported Formats -->
+        <section class="formats" id="formats">
+            <div class="container">
+                <div class="section-header">
+                    <span class="badge">🎬 Supported Content</span>
+                    <h2>All Instagram Formats</h2>
+                </div>
+                <div class="formats-grid">
+                    <div class="format-item glass">Reels</div>
+                    <div class="format-item glass">Videos</div>
+                    <div class="format-item glass">Stories</div>
+                    <div class="format-item glass">Photos</div>
+                    <div class="format-item glass">Audio</div>
+                    <div class="format-item glass">Profile Pics</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ -->
+        <section class="faq" id="faq">
+            <div class="container">
+                <div class="section-header">
+                    <span class="badge">❓ FAQ</span>
+                    <h2>Frequently Asked Questions</h2>
+                </div>
+                <div class="faq-list">
+                    <div class="faq-item glass">
+                        <button class="faq-question">Is DownReels really free? <span class="chevron">▾</span></button>
+                        <div class="faq-answer"><p>Yes! 100% free with no hidden fees. Download unlimited content.</p></div>
+                    </div>
+                    <div class="faq-item glass">
+                        <button class="faq-question">Do I need to install anything? <span class="chevron">▾</span></button>
+                        <div class="faq-answer"><p>No. It works directly in your browser on any device.</p></div>
+                    </div>
+                    <div class="faq-item glass">
+                        <button class="faq-question">Are the downloads watermarked? <span class="chevron">▾</span></button>
+                        <div class="faq-answer"><p>No watermarks. You get the original clean file.</p></div>
+                    </div>
+                    <div class="faq-item glass">
+                        <button class="faq-question">Can I download private accounts? <span class="chevron">▾</span></button>
+                        <div class="faq-answer"><p>Only public content is accessible due to Instagram's privacy rules.</p></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SEO Content -->
+        <section class="seo-content">
+            <div class="container">
+                <h2>Free Instagram Downloader – No Watermark, HD</h2>
+                <p>DownReels is the fastest <strong>Instagram video downloader</strong> for Reels, Stories, Photos, and Profile Pictures. Built for creators and marketers who need quick, high‑quality downloads without any bloat. Our tool works on all modern browsers and delivers your media with a single click. No sign‑up, no limits, always free.</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer placeholder -->
+    <div id="footer"></div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <span id="toastMsg"></span>
+        <button class="toast-close" onclick="hideToast()">✕</button>
+    </div>
+
+    <!-- Scripts -->
+    <script src="assets/js/config.js"></script>
+    <script src="assets/js/api.js"></script>
+    <script src="assets/js/ui.js"></script>
+    <script src="assets/js/app.js"></script>
+
+    <!-- Load navbar/footer dynamically -->
+    <script>
+        async function loadComponent(url, targetId) {
+            try {
+                const res = await fetch(url);
+                if (res.ok) {
+                    document.getElementById(targetId).innerHTML = await res.text();
+                }
+            } catch (e) {
+                console.warn('Could not load component:', url);
+            }
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            loadComponent('components/navbar.html', 'navbar');
+            loadComponent('components/footer.html', 'footer');
+        });
+    </script>
+</body>
+</html>
