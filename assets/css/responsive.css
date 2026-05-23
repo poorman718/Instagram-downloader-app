@@ -1,33 +1,17 @@
-@media (max-width: 1200px) {
-    .result-row {
-        max-width: 95%;
-    }
-    .result-preview {
-        width: 40%;
-        min-width: 280px;
-    }
-}
-
-@media (max-width: 900px) {
+@media (max-width: 1000px) {
     .result-row {
         flex-direction: column;
         max-width: 95%;
         min-height: auto;
         padding: 1.5rem;
-        gap: 1.2rem;
     }
     .result-preview {
         width: 100%;
         min-width: auto;
         height: 250px;
-        min-height: auto;
-    }
-    .result-content {
-        gap: 0.8rem;
     }
     .result-actions {
         flex-direction: row;
-        gap: 0.8rem;
     }
     .btn-dl-row, .btn-new-link {
         flex: 1;
@@ -35,88 +19,19 @@
 }
 
 @media (max-width: 768px) {
-    .hero {
-        min-height: 100vh;
-        padding: 4rem 0 2rem;
-    }
-    
-    .hero-title {
-        font-size: 1.8rem;
-        margin-bottom: 1.5rem;
-    }
-    
-    .downloader-card {
-        padding: 1.5rem;
-    }
-    
-    .input-group {
-        flex-direction: column;
-    }
-    
-    .url-input, .btn-paste {
-        width: 100%;
-        justify-content: center;
-    }
-    
-    .btn-paste {
-        padding: 0.9rem;
-    }
-    
-    .result-row {
-        padding: 1.2rem;
-    }
-    .result-preview {
-        height: 220px;
-    }
-    
-    .steps, .features-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    section {
-        padding: 3rem 0;
-    }
+    .hero { min-height: 80vh; padding: 3rem 0; }
+    .hero-title { font-size: 1.8rem; }
+    .input-group { flex-direction: column; }
+    .btn-paste { width: 100%; }
+    .result-row { padding: 1.2rem; }
+    .result-preview { height: 220px; }
+    .steps, .features-grid { grid-template-columns: 1fr; }
+    section { padding: 3rem 0; }
 }
 
 @media (max-width: 480px) {
-    .hero-title {
-        font-size: 1.5rem;
-    }
-    
-    .downloader-card {
-        padding: 1rem;
-        border-radius: 16px;
-    }
-    
-    .url-input {
-        padding: 0.8rem 1rem;
-        font-size: 0.85rem;
-        border-radius: 25px;
-    }
-    
-    .btn-paste {
-        padding: 0.8rem;
-        font-size: 0.85rem;
-    }
-    
-    .result-row {
-        padding: 1rem;
-    }
-    .result-preview {
-        height: 200px;
-    }
-    .result-title {
-        font-size: 1.1rem;
-    }
-    .result-actions {
-        flex-direction: column;
-        gap: 0.6rem;
-    }
-    .btn-dl-row, .btn-new-link {
-        width: 100%;
-    }
-    
-    .section-header h2 {
-        font-size: 1.5rem;
-    }
+    .hero-title { font-size: 1.5rem; }
+    .result-preview { height: 200px; }
+    .result-title { font-size: 1.1rem; }
+    .btn-dl-row, .btn-new-link { padding: 0.7rem; }
 }
