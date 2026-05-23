@@ -5,16 +5,16 @@ window.addEventListener('load', () => {
     const loader = document.getElementById('loader');
     const results = document.getElementById('results');
     const resultsGrid = document.getElementById('resultsGrid');
+    const downloaderCard = document.getElementById('downloaderCard');
 
     if (!pasteBtn || !urlInput) {
         console.error('Required elements not found');
         return;
     }
 
-    // Flag to avoid double fetch when paste button triggers both paste event and manual click
     let isFetching = false;
 
-    // ---------- Paste Button Click: Paste + Auto Fetch ----------
+    // Paste Button Click: Paste + Auto Fetch
     pasteBtn.addEventListener('click', async () => {
         if (isFetching) return;
         try {
@@ -22,7 +22,7 @@ window.addEventListener('load', () => {
             if (text) {
                 urlInput.value = text;
                 showToast('📋 Link pasted! Auto-downloading...', 'info');
-                await triggerDownload(text);  // auto fetch
+                await triggerDownload(text);
             } else {
                 showToast('Clipboard is empty.', 'info');
             }
@@ -31,9 +31,8 @@ window.addEventListener('load', () => {
         }
     });
 
-    // ---------- Manual Paste (Ctrl+V) Detected ----------
-    urlInput.addEventListener('paste', async (e) => {
-        // Allow default paste to happen, then read the value after a short delay
+    // Manual Paste (Ctrl+V) - auto fetch
+    urlInput.addEventListener('paste', async () => {
         setTimeout(async () => {
             const url = urlInput.value.trim();
             if (url && (url.includes('instagram.com') || url.includes('instagr.am'))) {
@@ -42,7 +41,7 @@ window.addEventListener('load', () => {
         }, 100);
     });
 
-    // Optional: Enter key still works
+    // Enter key support
     urlInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
             const url = urlInput.value.trim();
@@ -50,7 +49,6 @@ window.addEventListener('load', () => {
         }
     });
 
-    // ---------- Core Download Function ----------
     async function triggerDownload(url) {
         if (isFetching) return;
         if (!url.includes('instagram.com') && !url.includes('instagr.am')) {
@@ -84,7 +82,6 @@ window.addEventListener('load', () => {
         }
     }
 
-    // ---------- Rest of the code (renderResults, createHorizontalCard, etc.) remains EXACTLY the same ----------
     function renderResults(data) {
         resultsGrid.innerHTML = '';
         let mediaItems = [];
@@ -111,15 +108,16 @@ window.addEventListener('load', () => {
         card.className = 'result-row glass';
         card.style.animation = `fadeInUp 0.4s ${index * 0.1}s both`;
 
+        // Extract with fallbacks; adjust keys as per actual API response
         const mediaType = item.type || item.media_type || 'video';
         const videoUrl = item.video_url || item.download_url || item.url || '';
         const thumbnail = item.thumbnail || item.thumb || item.preview || '';
         const title = item.title || item.caption || item.description || 'Instagram Media';
-        const username = item.username || item.owner || item.author || item.uploader || '@instagram';
+        const username = item.username || item.owner?.username || item.author || item.uploader || '@instagram';
         const duration = item.duration || '';
 
         const words = title.split(' ');
-        const shortTitle = words.slice(0, 5).join(' ') + (words.length > 5 ? '...' : '');
+        const shortTitle = words.slice(0, 6).join(' ') + (words.length > 6 ? '...' : '');
 
         card.innerHTML = `
             <div class="result-preview">
