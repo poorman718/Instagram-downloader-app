@@ -1,22 +1,22 @@
-/* Tablet */
 @media (max-width: 1024px) {
     .result-row {
         max-width: 90%;
     }
 }
 
-/* Mobile Landscape */
 @media (max-width: 768px) {
     .hero {
-        padding: 3rem 0 2rem;
+        min-height: 100vh;
+        padding: 4rem 0 2rem;
     }
     
     .hero-title {
-        font-size: 2rem;
+        font-size: 1.8rem;
+        margin-bottom: 1.5rem;
     }
     
-    .hero-subtitle {
-        font-size: 1rem;
+    .downloader-card {
+        padding: 1.5rem;
     }
     
     .input-group {
@@ -37,6 +37,7 @@
         align-items: stretch;
         max-width: 95%;
         padding: 1.2rem;
+        gap: 1rem;
     }
     
     .result-preview {
@@ -54,38 +55,22 @@
         justify-content: center;
     }
     
-    .steps,
-    .features-grid {
+    .steps, .features-grid {
         grid-template-columns: 1fr;
     }
     
-    .formats-grid {
-        gap: 0.8rem;
-    }
-    
-    .format-item {
-        padding: 0.6rem 1.2rem;
-        font-size: 0.85rem;
+    section {
+        padding: 3rem 0;
     }
 }
 
-/* Small Mobile */
 @media (max-width: 480px) {
-    .hero {
-        padding: 2rem 0 1.5rem;
-    }
-    
     .hero-title {
-        font-size: 1.6rem;
-    }
-    
-    .hero-subtitle {
-        font-size: 0.9rem;
-        margin-bottom: 1.5rem;
+        font-size: 1.5rem;
     }
     
     .downloader-card {
-        padding: 1.2rem;
+        padding: 1rem;
         border-radius: 16px;
     }
     
@@ -117,7 +102,6 @@
     }
 }
 
-/* Large Desktop */
 @media (min-width: 1440px) {
     .result-row {
         max-width: 900px;
