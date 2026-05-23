@@ -48,16 +48,15 @@ body {
     background-clip: text;
 }
 
-/* Hero - Full height center */
+/* Hero - content moved up */
 .hero {
-    min-height: 100vh;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
     text-align: center;
     position: relative;
     background: radial-gradient(circle at 20% 50%, rgba(168,85,247,0.15) 0%, transparent 50%);
-    padding: 2rem 0;
+    padding: 4rem 0 2rem;
 }
 
 .hero-container-full {
@@ -71,7 +70,7 @@ body {
     font-size: clamp(2rem, 5vw, 3.5rem);
     font-weight: 800;
     line-height: 1.2;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
 }
 
 /* Downloader Card */
@@ -310,7 +309,6 @@ body.results-active #cta {
     display: none !important;
 }
 body.results-active .hero {
-    min-height: auto;
     padding: 2rem 0;
 }
 
