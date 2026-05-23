@@ -48,32 +48,38 @@ body {
     background-clip: text;
 }
 
-/* Hero */
+/* Hero - Full height center */
 .hero {
-    padding: 6rem 0 4rem;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     text-align: center;
     position: relative;
     background: radial-gradient(circle at 20% 50%, rgba(168,85,247,0.15) 0%, transparent 50%);
+    padding: 2rem 0;
+}
+
+.hero-container-full {
+    width: 100%;
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
 }
 
 .hero-title {
-    font-size: clamp(2.2rem, 6vw, 4rem);
+    font-size: clamp(2rem, 5vw, 3.5rem);
     font-weight: 800;
     line-height: 1.2;
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
 }
 
-.hero-subtitle {
-    font-size: 1.1rem;
-    color: var(--text-secondary);
-    max-width: 600px;
-    margin: 0 auto 2.5rem;
-}
-
+/* Downloader Card */
 .downloader-card {
-    max-width: 680px;
+    width: 100%;
+    max-width: 650px;
     margin: 0 auto;
-    padding: 2rem;
+    padding: 1.8rem 2rem;
 }
 
 .input-group {
@@ -100,27 +106,25 @@ body {
     box-shadow: 0 0 10px rgba(168,85,247,0.3);
 }
 
-/* Paste Button */
 .btn-paste {
-    background: rgba(168, 85, 247, 0.15);
-    border: 1px solid rgba(168, 85, 247, 0.3);
+    background: linear-gradient(135deg, var(--purple), var(--pink));
+    border: none;
     border-radius: 50px;
-    padding: 0.9rem 1.5rem;
-    color: #c4b5fd;
+    padding: 1rem 1.5rem;
+    color: #fff;
     cursor: pointer;
     transition: all 0.3s;
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    font-weight: 600;
+    font-weight: 700;
     font-size: 0.95rem;
     white-space: nowrap;
+    box-shadow: var(--glow);
 }
 .btn-paste:hover {
-    background: rgba(168, 85, 247, 0.25);
-    border-color: var(--purple);
-    color: #fff;
-    box-shadow: 0 0 15px rgba(168, 85, 247, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 0 25px rgba(236,72,153,0.5);
 }
 .btn-paste:active {
     transform: scale(0.95);
@@ -157,7 +161,7 @@ body {
 
 /* Results Section */
 .results-section {
-    margin: 2.5rem 0;
+    margin: 2rem 0;
     text-align: center;
 }
 .results-grid {
@@ -170,7 +174,7 @@ body {
 /* Big Horizontal Result Card */
 .result-row {
     width: 100%;
-    max-width: 800px;            /* bada card */
+    max-width: 800px;
     margin: 0 auto;
     display: flex;
     align-items: center;
@@ -188,7 +192,7 @@ body {
 
 .result-preview {
     position: relative;
-    width: 200px;                /* larger preview */
+    width: 200px;
     height: 130px;
     border-radius: 12px;
     overflow: hidden;
@@ -295,23 +299,25 @@ body {
 }
 
 /* HIDE elements when results are active */
+body.results-active .hero-title,
 body.results-active .downloader-card,
 body.results-active .how-to,
 body.results-active .features,
 body.results-active .formats,
 body.results-active .faq,
 body.results-active .seo-content,
-body.results-active #cta,
-body.results-active .hero-title,
-body.results-active .hero-subtitle {
+body.results-active #cta {
     display: none !important;
 }
 body.results-active .hero {
-    padding-top: 2rem;
-    padding-bottom: 1rem;
+    min-height: auto;
+    padding: 2rem 0;
 }
 
 /* Sections general */
+section {
+    padding: 5rem 0;
+}
 .section-header {
     text-align: center;
     margin-bottom: 3rem;
@@ -426,13 +432,11 @@ h2 {
 }
 .toast.show { transform: translateX(0); }
 .toast-close { background: none; border: none; color: #fff; cursor: pointer; font-size: 1.2rem; }
-
-/* Toast Types */
 .toast-success { border-left: 4px solid #10b981; }
 .toast-error { border-left: 4px solid #ef4444; }
 .toast-info { border-left: 4px solid #3b82f6; }
 
-/* Navbar & Footer (simple) */
+/* Navbar & Footer */
 nav {
     padding: 1.5rem 2rem;
     display: flex;
