@@ -26,35 +26,27 @@ async function fetchInstagramMedia(url) {
     }
 
     console.log('Raw API Response:', data);
-    
-    // Normalize response to always return an array of media items
     return normalizeResponse(data);
 }
 
 function normalizeResponse(data) {
     let items = [];
     
-    // Case 1: Direct array
     if (Array.isArray(data)) {
         items = data;
     }
-    // Case 2: Object with media array
     else if (data && data.media && Array.isArray(data.media)) {
         items = data.media;
     }
-    // Case 3: Object with items array
     else if (data && data.items && Array.isArray(data.items)) {
         items = data.items;
     }
-    // Case 4: Object with data array
     else if (data && data.data && Array.isArray(data.data)) {
         items = data.data;
     }
-    // Case 5: Single media object
     else if (data && (data.url || data.video_url || data.download_url || data.src)) {
         items = [data];
     }
-    // Case 6: Profile picture response (usually has profile_pic_url or similar)
     else if (data && data.profile_pic_url) {
         items = [{
             type: 'profile_picture',
@@ -64,7 +56,6 @@ function normalizeResponse(data) {
             username: data.username || '@instagram'
         }];
     }
-    // Case 7: Story response
     else if (data && data.story_url) {
         items = [{
             type: 'story',
@@ -75,14 +66,11 @@ function normalizeResponse(data) {
             duration: data.duration || ''
         }];
     }
-    // Case 8: Any other object - try to extract downloadable URLs
     else if (data && typeof data === 'object') {
-        // Flatten all properties to find URLs
         const flatItems = flattenObject(data);
         items = flatItems.filter(item => item.url && (item.url.startsWith('http')));
     }
     
-    // Ensure each item has required fields
     return items.map(item => ({
         type: item.type || item.media_type || guessMediaType(item),
         url: item.url || item.video_url || item.download_url || item.src || item.story_url || item.profile_pic_url || '',
