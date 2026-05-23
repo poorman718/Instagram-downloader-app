@@ -80,6 +80,7 @@ body {
     display: flex;
     gap: 0.8rem;
     flex-wrap: wrap;
+    align-items: center;
 }
 
 .url-input {
@@ -104,14 +105,16 @@ body {
     background: rgba(168, 85, 247, 0.15);
     border: 1px solid rgba(168, 85, 247, 0.3);
     border-radius: 50px;
-    padding: 0 1.2rem;
+    padding: 0.9rem 1.5rem;
     color: #c4b5fd;
     cursor: pointer;
     transition: all 0.3s;
     display: flex;
     align-items: center;
-    justify-content: center;
-    font-size: 1rem;
+    gap: 0.5rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+    white-space: nowrap;
 }
 .btn-paste:hover {
     background: rgba(168, 85, 247, 0.25);
@@ -122,25 +125,9 @@ body {
 .btn-paste:active {
     transform: scale(0.95);
 }
-
-.btn-download {
-    padding: 1rem 2rem;
-    background: linear-gradient(135deg, var(--purple), var(--pink));
-    border: none;
-    border-radius: 50px;
-    color: #fff;
-    font-weight: 700;
-    font-size: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    cursor: pointer;
-    transition: all 0.3s;
-    box-shadow: var(--glow);
-}
-.btn-download:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 0 25px rgba(236,72,153,0.5);
+.btn-paste:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
 }
 
 .error-msg {
@@ -148,13 +135,6 @@ body {
     margin-top: 0.8rem;
     font-size: 0.9rem;
     min-height: 1.2rem;
-}
-
-.btn-paste {
-    /* existing styles... */
-    padding: 0 1.5rem;
-    gap: 0.5rem;
-    white-space: nowrap;
 }
 
 /* Loader */
@@ -184,18 +164,18 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1rem;
+    gap: 1.5rem;
 }
 
-/* ========== RESULT ROW (horizontal card) ========== */
+/* Big Horizontal Result Card */
 .result-row {
     width: 100%;
-    max-width: 500px;            /* 👈 500px width */
+    max-width: 800px;            /* bada card */
     margin: 0 auto;
     display: flex;
     align-items: center;
-    gap: 1rem;
-    padding: 1rem 1.5rem;
+    gap: 1.5rem;
+    padding: 1.5rem 2rem;
     background: rgba(18, 18, 35, 0.6);
     backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.08);
@@ -203,14 +183,14 @@ body {
     transition: transform 0.2s ease;
 }
 .result-row:hover {
-    transform: translateY(-2px);
+    transform: translateY(-3px);
 }
 
 .result-preview {
     position: relative;
-    width: 120px;
-    height: 90px;
-    border-radius: 10px;
+    width: 200px;                /* larger preview */
+    height: 130px;
+    border-radius: 12px;
     overflow: hidden;
     flex-shrink: 0;
     background: #1a1a2e;
@@ -226,52 +206,56 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 2rem;
+    font-size: 2.5rem;
+    background: linear-gradient(135deg, #1a1a2e, #2a2a3e);
 }
 .result-duration {
     position: absolute;
-    bottom: 4px;
-    right: 4px;
+    bottom: 8px;
+    right: 8px;
     background: rgba(0,0,0,0.8);
     color: #fff;
-    font-size: 0.65rem;
-    padding: 2px 6px;
+    font-size: 0.7rem;
+    padding: 2px 8px;
     border-radius: 4px;
+    backdrop-filter: blur(10px);
 }
 
 .result-info {
     flex: 1;
     min-width: 150px;
+    text-align: left;
 }
 .result-title {
-    font-size: 0.95rem;
-    font-weight: 600;
+    font-size: 1.1rem;
+    font-weight: 700;
     color: var(--text);
     cursor: pointer;
     transition: color 0.2s;
-    line-height: 1.3;
-    margin-bottom: 0.3rem;
+    line-height: 1.4;
+    margin-bottom: 0.5rem;
+    word-break: break-word;
 }
 .result-title:hover {
     color: var(--purple);
 }
 .result-creator {
-    font-size: 0.8rem;
+    font-size: 0.9rem;
     color: var(--text-secondary);
     display: flex;
     align-items: center;
     gap: 0.4rem;
 }
 .creator-dot {
-    width: 6px;
-    height: 6px;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
-    background: var(--purple);
+    background: linear-gradient(135deg, var(--purple), var(--pink));
 }
 
 .result-actions {
     display: flex;
-    gap: 0.5rem;
+    gap: 0.8rem;
     align-items: center;
     flex-shrink: 0;
 }
@@ -279,11 +263,11 @@ body {
     display: flex;
     align-items: center;
     gap: 0.4rem;
-    padding: 0.6rem 1.1rem;
+    padding: 0.7rem 1.3rem;
     border: none;
     border-radius: 25px;
     font-weight: 600;
-    font-size: 0.8rem;
+    font-size: 0.9rem;
     cursor: pointer;
     transition: all 0.3s;
 }
@@ -310,18 +294,17 @@ body {
     color: #fff;
 }
 
-/* Hide all sections when results are active */
+/* HIDE elements when results are active */
+body.results-active .downloader-card,
 body.results-active .how-to,
 body.results-active .features,
 body.results-active .formats,
 body.results-active .faq,
 body.results-active .seo-content,
-body.results-active #cta {
-    display: none;
-}
+body.results-active #cta,
 body.results-active .hero-title,
 body.results-active .hero-subtitle {
-    display: none;
+    display: none !important;
 }
 body.results-active .hero {
     padding-top: 2rem;
