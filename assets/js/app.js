@@ -5,7 +5,6 @@ window.addEventListener('load', () => {
     const loader = document.getElementById('loader');
     const results = document.getElementById('results');
     const resultsGrid = document.getElementById('resultsGrid');
-    const downloaderCard = document.getElementById('downloaderCard');
 
     if (!pasteBtn || !urlInput) {
         console.error('Required elements not found');
@@ -14,7 +13,6 @@ window.addEventListener('load', () => {
 
     let isFetching = false;
 
-    // Paste Button Click: Paste + Auto Fetch
     pasteBtn.addEventListener('click', async () => {
         if (isFetching) return;
         try {
@@ -31,7 +29,6 @@ window.addEventListener('load', () => {
         }
     });
 
-    // Manual Paste (Ctrl+V) - auto fetch
     urlInput.addEventListener('paste', async () => {
         setTimeout(async () => {
             const url = urlInput.value.trim();
@@ -41,7 +38,6 @@ window.addEventListener('load', () => {
         }, 100);
     });
 
-    // Enter key support
     urlInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
             const url = urlInput.value.trim();
@@ -51,6 +47,8 @@ window.addEventListener('load', () => {
 
     async function triggerDownload(url) {
         if (isFetching) return;
+        
+        // Accept any Instagram URL
         if (!url.includes('instagram.com') && !url.includes('instagr.am')) {
             errorMsg.textContent = '❌ Please enter a valid Instagram link.';
             return;
@@ -65,7 +63,7 @@ window.addEventListener('load', () => {
 
         try {
             const data = await fetchInstagramMedia(url);
-            console.log('API Response:', data);
+            console.log('Normalized Data:', data);
             renderResults(data);
             results.style.display = 'block';
             showToast('✅ Media ready!', 'success');
@@ -82,22 +80,23 @@ window.addEventListener('load', () => {
         }
     }
 
-    function renderResults(data) {
+    function renderResults(mediaItems) {
         resultsGrid.innerHTML = '';
-        let mediaItems = [];
 
-        if (data && data.items) mediaItems = data.items;
-        else if (data && data.media) mediaItems = data.media;
-        else if (data && data.data) mediaItems = Array.isArray(data.data) ? data.data : [data.data];
-        else if (Array.isArray(data)) mediaItems = data;
-        else if (data && (data.video_url || data.download_url || data.url)) mediaItems = [data];
+        if (!mediaItems || mediaItems.length === 0) {
+            resultsGrid.innerHTML = `<div style="text-align:center;padding:2rem;color:#f87171;">No downloadable media found for this URL.</div>`;
+            return;
+        }
 
-        if (mediaItems.length === 0) {
+        // Filter out items without valid URLs
+        const validItems = mediaItems.filter(item => item.url);
+        
+        if (validItems.length === 0) {
             resultsGrid.innerHTML = `<div style="text-align:center;padding:2rem;color:#f87171;">No downloadable media found.</div>`;
             return;
         }
 
-        mediaItems.forEach((item, index) => {
+        validItems.forEach((item, index) => {
             const card = createHorizontalCard(item, index);
             resultsGrid.appendChild(card);
         });
@@ -108,24 +107,29 @@ window.addEventListener('load', () => {
         card.className = 'result-row glass';
         card.style.animation = `fadeInUp 0.4s ${index * 0.1}s both`;
 
-        // Extract with fallbacks; adjust keys as per actual API response
-        const mediaType = item.type || item.media_type || 'video';
-        const videoUrl = item.video_url || item.download_url || item.url || '';
-        const thumbnail = item.thumbnail || item.thumb || item.preview || '';
-        const title = item.title || item.caption || item.description || 'Instagram Media';
-        const username = item.username || item.owner?.username || item.author || item.uploader || '@instagram';
+        const mediaType = item.type || 'video';
+        const downloadUrl = item.url;
+        const thumbnail = item.thumbnail || downloadUrl;
+        const title = item.title || 'Instagram Media';
+        const username = item.username || '@instagram';
         const duration = item.duration || '';
 
+        // Truncate title
         const words = title.split(' ');
         const shortTitle = words.slice(0, 6).join(' ') + (words.length > 6 ? '...' : '');
 
+        // Media type icon
+        const typeIcon = getTypeIcon(mediaType);
+        const typeLabel = getTypeLabel(mediaType);
+
         card.innerHTML = `
             <div class="result-preview">
-                ${thumbnail ? 
-                    `<img src="${thumbnail}" alt="preview" class="result-thumb" onerror="this.style.display='none'" loading="lazy">` :
-                    `<div class="result-thumb-placeholder">📸</div>`
+                ${thumbnail && thumbnail.startsWith('http') ? 
+                    `<img src="${thumbnail}" alt="${typeLabel}" class="result-thumb" onerror="this.style.display='none'" loading="lazy">` :
+                    `<div class="result-thumb-placeholder">${typeIcon}</div>`
                 }
                 ${duration ? `<span class="result-duration">${duration}s</span>` : ''}
+                <span style="position:absolute;top:8px;left:8px;background:rgba(0,0,0,0.7);color:#fff;font-size:0.65rem;padding:2px 8px;border-radius:4px;text-transform:uppercase;">${typeLabel}</span>
             </div>
             <div class="result-info">
                 <h3 class="result-title" data-full-title="${escapeHtml(title)}" title="Click to copy title">${shortTitle}</h3>
@@ -134,9 +138,9 @@ window.addEventListener('load', () => {
                 </div>
             </div>
             <div class="result-actions">
-                <button class="btn-dl-row" data-url="${videoUrl}" data-filename="${sanitizeFilename(title)}_${username}.mp4">
+                <button class="btn-dl-row" data-url="${downloadUrl}" data-filename="${sanitizeFilename(title)}_${username}.${getExtension(downloadUrl, mediaType)}">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                    Download
+                    Download ${typeLabel}
                 </button>
                 <button class="btn-new-link">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -146,27 +150,61 @@ window.addEventListener('load', () => {
         `;
 
         setTimeout(() => {
-            attachRowEvents(card, videoUrl, title, username);
+            attachRowEvents(card, downloadUrl, title, username, mediaType);
         }, 0);
 
         return card;
     }
 
-    function attachRowEvents(card, videoUrl, fullTitle, username) {
+    function getTypeIcon(type) {
+        const icons = {
+            'video': '🎥',
+            'reel': '📹',
+            'story': '⭕',
+            'photo': '🖼️',
+            'profile_picture': '👤',
+            'audio': '🎵'
+        };
+        return icons[type] || '📸';
+    }
+
+    function getTypeLabel(type) {
+        const labels = {
+            'video': 'Video',
+            'reel': 'Reel',
+            'story': 'Story',
+            'photo': 'Photo',
+            'profile_picture': 'Profile Pic',
+            'audio': 'Audio'
+        };
+        return labels[type] || 'Media';
+    }
+
+    function getExtension(url, type) {
+        if (type === 'audio') return 'mp3';
+        if (type === 'photo' || type === 'profile_picture') return 'jpg';
+        if (url.includes('.jpg') || url.includes('.jpeg')) return 'jpg';
+        if (url.includes('.png')) return 'png';
+        return 'mp4';
+    }
+
+    function attachRowEvents(card, downloadUrl, fullTitle, username, mediaType) {
         const dlBtn = card.querySelector('.btn-dl-row');
-        if (dlBtn && videoUrl) {
+        if (dlBtn && downloadUrl) {
             dlBtn.addEventListener('click', async (e) => {
                 e.stopPropagation();
                 dlBtn.disabled = true;
                 dlBtn.innerHTML = `<span class="btn-spinner"></span> Downloading`;
                 try {
-                    await downloadFile(videoUrl, `${sanitizeFilename(fullTitle)}_${username}.mp4`);
+                    await downloadFile(downloadUrl, `${sanitizeFilename(fullTitle)}_${username}.${getExtension(downloadUrl, mediaType)}`);
                     dlBtn.innerHTML = `✓ Downloaded`;
                     showToast('✅ Download complete!', 'success');
                 } catch (err) {
-                    dlBtn.innerHTML = `Retry`;
+                    // Fallback: open in new tab
+                    window.open(downloadUrl, '_blank');
+                    dlBtn.innerHTML = `✓ Opened`;
                     dlBtn.disabled = false;
-                    showToast('❌ Download failed', 'error');
+                    showToast('📂 Opened in new tab', 'info');
                 }
             });
         }
@@ -214,7 +252,9 @@ window.addEventListener('load', () => {
     }
 
     function escapeHtml(text) {
-        return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
     }
 
     // FAQ toggle
@@ -229,7 +269,6 @@ window.addEventListener('load', () => {
     });
 });
 
-// Animations
 const style = document.createElement('style');
 style.textContent = `
     @keyframes fadeInUp {
