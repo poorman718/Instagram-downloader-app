@@ -111,37 +111,59 @@ window.addEventListener('load', () => {
         const title = item.title || 'Instagram Media';
         const username = item.username || '@instagram';
         const duration = item.duration || '';
+        const quality = item.quality || 'HD';
 
         const words = title.split(' ');
-        const shortTitle = words.slice(0, 6).join(' ') + (words.length > 6 ? '...' : '');
-
-        const typeIcon = getTypeIcon(mediaType);
+        const shortTitle = words.slice(0, 8).join(' ') + (words.length > 8 ? '...' : '');
         const typeLabel = getTypeLabel(mediaType);
+
+        // Check if the URL is a video (mp4) or image
+        const isVideo = downloadUrl.includes('.mp4') || mediaType === 'video' || mediaType === 'reel' || mediaType === 'story';
+        const isAudio = mediaType === 'audio';
 
         card.innerHTML = `
             <div class="result-preview">
-                ${thumbnail && thumbnail.startsWith('http') ? 
-                    `<img src="${thumbnail}" alt="${typeLabel}" class="result-thumb" onerror="this.style.display='none'" loading="lazy">` :
-                    `<div class="result-thumb-placeholder">${typeIcon}</div>`
+                ${isVideo ? 
+                    `<video class="result-video" controls autoplay muted loop playsinline>
+                        <source src="${downloadUrl}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>` :
+                    isAudio ?
+                    `<div class="result-video-placeholder">
+                        <span style="font-size:4rem;">🎵</span>
+                    </div>
+                    <audio controls style="position:absolute;bottom:10px;left:10px;right:10px;width:calc(100% - 20px);">
+                        <source src="${downloadUrl}" type="audio/mpeg">
+                    </audio>` :
+                    thumbnail && thumbnail.startsWith('http') ?
+                    `<img src="${thumbnail}" alt="${typeLabel}" class="result-video" onerror="this.style.display='none'" loading="lazy" style="object-fit: cover;">` :
+                    `<div class="result-video-placeholder">📸</div>`
                 }
-                ${duration ? `<span class="result-duration">${duration}s</span>` : ''}
-                <span style="position:absolute;top:8px;left:8px;background:rgba(0,0,0,0.7);color:#fff;font-size:0.65rem;padding:2px 8px;border-radius:4px;text-transform:uppercase;">${typeLabel}</span>
+                ${duration ? `<span style="position:absolute;bottom:12px;right:12px;background:rgba(0,0,0,0.8);color:#fff;font-size:0.75rem;padding:4px 10px;border-radius:6px;backdrop-filter:blur(10px);">⏱ ${duration}s</span>` : ''}
             </div>
-            <div class="result-info">
-                <h3 class="result-title" data-full-title="${escapeHtml(title)}" title="Click to copy title">${shortTitle}</h3>
-                <div class="result-creator">
-                    <span class="creator-dot"></span> ${username}
+            <div class="result-content">
+                <div>
+                    <h3 class="result-title" data-full-title="${escapeHtml(title)}" title="Click to copy full title">${shortTitle}</h3>
+                    <div class="result-creator">
+                        <span class="creator-dot"></span> 
+                        <span>${username}</span>
+                    </div>
+                    <div class="result-meta" style="margin-top: 0.8rem;">
+                        <span>📹 ${typeLabel}</span>
+                        ${quality ? `<span>✨ ${quality}</span>` : ''}
+                        ${duration ? `<span>⏱ ${duration}s</span>` : ''}
+                    </div>
                 </div>
-            </div>
-            <div class="result-actions">
-                <button class="btn-dl-row" data-url="${downloadUrl}" data-filename="${sanitizeFilename(title)}_${username}.${getExtension(downloadUrl, mediaType)}">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                    Download ${typeLabel}
-                </button>
-                <button class="btn-new-link">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                    New Link
-                </button>
+                <div class="result-actions">
+                    <button class="btn-dl-row" data-url="${downloadUrl}" data-filename="${sanitizeFilename(title)}_${username}.${getExtension(downloadUrl, mediaType)}">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        Download ${typeLabel}
+                    </button>
+                    <button class="btn-new-link">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        New Link
+                    </button>
+                </div>
             </div>
         `;
 
@@ -150,18 +172,6 @@ window.addEventListener('load', () => {
         }, 0);
 
         return card;
-    }
-
-    function getTypeIcon(type) {
-        const icons = {
-            'video': '🎥',
-            'reel': '📹',
-            'story': '⭕',
-            'photo': '🖼️',
-            'profile_picture': '👤',
-            'audio': '🎵'
-        };
-        return icons[type] || '📸';
     }
 
     function getTypeLabel(type) {
@@ -190,33 +200,25 @@ window.addEventListener('load', () => {
             dlBtn.addEventListener('click', async (e) => {
                 e.stopPropagation();
                 
-                // Disable button and show downloading state
                 dlBtn.disabled = true;
-                dlBtn.innerHTML = `
-                    <span class="btn-spinner"></span>
-                    Preparing...
-                `;
+                dlBtn.innerHTML = `<span class="btn-spinner"></span> Preparing...`;
                 
                 const filename = `${sanitizeFilename(fullTitle)}_${username}.${getExtension(downloadUrl, mediaType)}`;
                 
                 try {
-                    // Try direct download first
                     const downloaded = await downloadFileDirect(downloadUrl, filename, dlBtn);
                     
                     if (downloaded) {
                         dlBtn.innerHTML = `✓ Downloaded`;
                         showToast('✅ Download complete!', 'success');
-                        
-                        // Reset button after 2 seconds
                         setTimeout(() => {
                             dlBtn.disabled = false;
                             dlBtn.innerHTML = `
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                                 Download ${getTypeLabel(mediaType)}
                             `;
                         }, 2000);
                     } else {
-                        // If direct download failed, try iframe method
                         const iframeDownloaded = await downloadFileIframe(downloadUrl, filename, dlBtn);
                         
                         if (iframeDownloaded) {
@@ -225,19 +227,18 @@ window.addEventListener('load', () => {
                             setTimeout(() => {
                                 dlBtn.disabled = false;
                                 dlBtn.innerHTML = `
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                                     Download ${getTypeLabel(mediaType)}
                                 `;
                             }, 2000);
                         } else {
-                            // Last resort: use anchor tag with download attribute
                             downloadFileAnchor(downloadUrl, filename);
                             dlBtn.innerHTML = `✓ Downloaded`;
                             showToast('✅ Download started!', 'success');
                             setTimeout(() => {
                                 dlBtn.disabled = false;
                                 dlBtn.innerHTML = `
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                                     Download ${getTypeLabel(mediaType)}
                                 `;
                             }, 2000);
@@ -245,14 +246,13 @@ window.addEventListener('load', () => {
                     }
                 } catch (err) {
                     console.error('Download error:', err);
-                    // Final fallback: anchor click
                     downloadFileAnchor(downloadUrl, filename);
                     dlBtn.innerHTML = `✓ Downloaded`;
                     showToast('✅ Download started!', 'success');
                     setTimeout(() => {
                         dlBtn.disabled = false;
                         dlBtn.innerHTML = `
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                             Download ${getTypeLabel(mediaType)}
                         `;
                     }, 2000);
@@ -284,105 +284,63 @@ window.addEventListener('load', () => {
         }
     }
 
-    // Method 1: Direct fetch download (works best with CORS-enabled URLs)
     async function downloadFileDirect(url, filename, button) {
         try {
             button.innerHTML = `<span class="btn-spinner"></span> Downloading...`;
-            
-            const response = await fetch(url, {
-                mode: 'cors',
-                headers: {
-                    'Origin': window.location.origin
-                }
-            });
-            
-            if (!response.ok) throw new Error('Network response was not ok');
-            
+            const response = await fetch(url, { mode: 'cors' });
+            if (!response.ok) throw new Error('Network error');
             const blob = await response.blob();
-            
-            // Check if blob is valid
             if (blob.size === 0) throw new Error('Empty file');
-            
             const blobUrl = window.URL.createObjectURL(blob);
-            
-            // Use anchor for download
             const a = document.createElement('a');
             a.href = blobUrl;
             a.download = filename;
             a.style.display = 'none';
             document.body.appendChild(a);
             a.click();
-            
-            // Cleanup
             setTimeout(() => {
                 document.body.removeChild(a);
                 window.URL.revokeObjectURL(blobUrl);
             }, 1000);
-            
             return true;
         } catch (error) {
-            console.warn('Direct download failed, trying alternative method:', error.message);
+            console.warn('Direct download failed:', error.message);
             return false;
         }
     }
 
-    // Method 2: Hidden iframe download (for cross-origin URLs)
     async function downloadFileIframe(url, filename, button) {
         return new Promise((resolve) => {
             try {
                 button.innerHTML = `<span class="btn-spinner"></span> Processing...`;
-                
-                // Create hidden iframe
                 const iframe = document.createElement('iframe');
                 iframe.style.display = 'none';
-                iframe.style.width = '0';
-                iframe.style.height = '0';
-                iframe.style.border = 'none';
-                iframe.name = 'download-frame-' + Date.now();
-                
                 document.body.appendChild(iframe);
-                
-                // Set download attribute via iframe
-                const iframeDoc = iframe.contentWindow || iframe.contentDocument;
-                
-                // Create download link in iframe context
                 const iframeLink = document.createElement('a');
                 iframeLink.href = url;
                 iframeLink.download = filename;
                 iframeLink.target = '_self';
-                
                 iframe.contentDocument.body.appendChild(iframeLink);
                 iframeLink.click();
-                
-                // Cleanup after delay
                 setTimeout(() => {
-                    if (document.body.contains(iframe)) {
-                        document.body.removeChild(iframe);
-                    }
+                    if (document.body.contains(iframe)) document.body.removeChild(iframe);
                     resolve(true);
                 }, 1500);
-                
             } catch (error) {
-                console.warn('Iframe download failed:', error.message);
                 resolve(false);
             }
         });
     }
 
-    // Method 3: Simple anchor download (last resort)
     function downloadFileAnchor(url, filename) {
         const a = document.createElement('a');
         a.href = url;
         a.download = filename;
-        a.target = '_self';  // Same tab
-        a.rel = 'noopener noreferrer';
+        a.target = '_self';
         a.style.display = 'none';
         document.body.appendChild(a);
         a.click();
-        
-        setTimeout(() => {
-            document.body.removeChild(a);
-        }, 1000);
+        setTimeout(() => document.body.removeChild(a), 1000);
     }
 
     function sanitizeFilename(name) {
@@ -395,7 +353,6 @@ window.addEventListener('load', () => {
         return div.innerHTML;
     }
 
-    // FAQ toggle
     document.querySelectorAll('.faq-question').forEach(btn => {
         btn.addEventListener('click', function() {
             const item = this.closest('.faq-item');
@@ -407,19 +364,15 @@ window.addEventListener('load', () => {
     });
 });
 
-// Add required styles
 const style = document.createElement('style');
 style.textContent = `
     @keyframes fadeInUp {
         from { opacity: 0; transform: translateY(20px); }
         to { opacity: 1; transform: translateY(0); }
     }
-    @keyframes spin { 
-        to { transform: rotate(360deg); } 
-    }
+    @keyframes spin { to { transform: rotate(360deg); } }
     .btn-spinner {
-        width: 14px;
-        height: 14px;
+        width: 16px; height: 16px;
         border: 2px solid rgba(255,255,255,0.3);
         border-top-color: white;
         border-radius: 50%;
