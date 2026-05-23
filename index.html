@@ -228,7 +228,7 @@
         function initThemeToggle() {
             const toggle = document.getElementById('themeToggle');
             if (!toggle) return;
-            const savedTheme = localStorage.getItem('theme') || 'light';
+            const savedTheme = localStorage.getItem('theme') || 'dark';
             document.body.classList.toggle('dark', savedTheme === 'dark');
             toggle.addEventListener('click', () => {
                 const isDark = document.body.classList.toggle('dark');
