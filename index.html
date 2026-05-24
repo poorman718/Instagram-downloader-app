@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DownReels - Instagram Video Downloader</title>
-    <meta name="description" content="Download Instagram Reels, Videos, Stories, Photos in HD. No watermark, no login.">
+    <meta name="description" content="Download Instagram Reels, Videos in HD. No watermark, no login, 100% free.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="assets/css/responsive.css">
 </head>
 <body class="dark">
-    <!-- ========== HEADER ========== -->
+    <!-- Header -->
     <header class="navbar-instagram">
         <a href="index.html" class="nav-brand">
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -21,41 +21,43 @@
             DownReels
         </a>
 
-        <!-- Centre nav links -->
-        <nav class="nav-center">
-            <a href="index.html">Home</a>
-            <a href="#" id="qaLink">Q&A</a>
+        <!-- Centered navigation -->
+        <div class="nav-center">
+            <a href="index.html" class="nav-link active">Home</a>
+            <a href="#faq" class="nav-link">Q&A</a>
+
+            <!-- Tools Dropdown -->
             <div class="dropdown">
-                <button class="dropbtn" id="toolsBtn">
+                <button class="nav-link dropdown-toggle" id="toolsDropdownBtn">
                     Tools
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                    <svg class="chevron-down" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
                 </button>
-                <div class="dropdown-content" id="toolsDropdown">
-                    <a href="#" data-platform="Instagram">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/></svg>
+                <div class="dropdown-menu" id="toolsDropdownMenu">
+                    <a href="#" class="dropdown-item" data-platform="Instagram">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.5"/></svg>
                         Instagram
                     </a>
-                    <a href="#" data-platform="Facebook">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
+                    <a href="#" class="dropdown-item" data-platform="Facebook">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
                         Facebook
                     </a>
-                    <a href="#" data-platform="Twitter">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"/></svg>
-                        Twitter
-                    </a>
-                    <a href="#" data-platform="TikTok">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a4 4 0 014 4v4a4 4 0 01-8 0V6a4 4 0 014-4z"/><path d="M16 6h2a4 4 0 014 4v4a4 4 0 01-8 0"/></svg>
-                        TikTok
-                    </a>
-                    <a href="#" data-platform="YouTube">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22.54 6.42a2.78 2.78 0 00-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 00-1.94 2A29.94 29.94 0 001 11.75a29.94 29.94 0 00.46 5.33A2.78 2.78 0 003.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 001.94-2 29.94 29.94 0 00.46-5.25 29.94 29.94 0 00-.46-5.33z"/><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"/></svg>
+                    <a href="#" class="dropdown-item" data-platform="YouTube">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
                         YouTube
+                    </a>
+                    <a href="#" class="dropdown-item" data-platform="Twitter/X">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                        Twitter/X
+                    </a>
+                    <a href="#" class="dropdown-item" data-platform="TikTok">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
+                        TikTok
                     </a>
                 </div>
             </div>
-        </nav>
+        </div>
 
-        <!-- Right side: theme toggle -->
+        <!-- Theme Toggle (right side) -->
         <button id="themeToggle" class="theme-toggle-btn" aria-label="Toggle theme">
             <svg class="sun-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
@@ -67,29 +69,42 @@
     </header>
 
     <main>
-        <!-- Hero section (unchanged) -->
+        <!-- Hero -->
         <section class="hero" id="hero">
             <div class="container hero-container">
                 <h1 class="hero-title">Download Instagram <span class="gradient-text">Reels & Videos</span> Instantly</h1>
+                
                 <div class="downloader-card" id="downloaderCard">
                     <div class="input-group">
                         <input type="url" id="urlInput" class="url-input" placeholder="Paste Instagram URL here..." autocomplete="off">
                         <button id="pasteBtn" class="btn-paste">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+                            </svg>
                             Paste & Download
                         </button>
                     </div>
                     <p class="error-msg" id="errorMsg"></p>
                 </div>
-                <div id="loader" class="loader-container" style="display:none;"><div class="spinner"></div><p>Fetching media...</p></div>
-                <div id="results" class="results-section" style="display:none;"><div id="resultsGrid" class="results-grid"></div></div>
+
+                <div id="loader" class="loader-container" style="display:none;">
+                    <div class="spinner"></div>
+                    <p>Fetching media...</p>
+                </div>
+
+                <div id="results" class="results-section" style="display:none;">
+                    <div id="resultsGrid" class="results-grid"></div>
+                </div>
             </div>
         </section>
 
-        <!-- Features (unchanged) -->
+        <!-- Features -->
         <section class="features" id="features">
             <div class="container">
-                <div class="section-header"><span class="badge">✨ Features</span><h2>Why DownReels?</h2></div>
+                <div class="section-header">
+                    <span class="badge">✨ Features</span>
+                    <h2>Why DownReels?</h2>
+                </div>
                 <div class="features-grid">
                     <div class="feature-card"><div class="feature-icon">⚡</div><h3>Lightning Fast</h3><p>Downloads start in seconds.</p></div>
                     <div class="feature-card"><div class="feature-icon">🎥</div><h3>All Formats</h3><p>Reels, Videos, Stories, Photos, Audio.</p></div>
@@ -99,10 +114,13 @@
             </div>
         </section>
 
-        <!-- FAQ (unchanged) -->
+        <!-- FAQ -->
         <section class="faq" id="faq">
             <div class="container">
-                <div class="section-header"><span class="badge">❓ FAQ</span><h2>Frequently Asked Questions</h2></div>
+                <div class="section-header">
+                    <span class="badge">❓ FAQ</span>
+                    <h2>Frequently Asked Questions</h2>
+                </div>
                 <div class="faq-list">
                     <div class="faq-item"><button class="faq-question">Is DownReels free? <span>▾</span></button><div class="faq-answer"><p>Yes! 100% free.</p></div></div>
                     <div class="faq-item"><button class="faq-question">What content can I download? <span>▾</span></button><div class="faq-answer"><p>Reels, Videos, Stories, Photos, Audio from public accounts.</p></div></div>
@@ -112,29 +130,32 @@
         </section>
     </main>
 
-    <!-- ========== FOOTER ========== -->
-    <footer class="site-footer">
+    <!-- Footer -->
+    <footer>
         <div class="footer-links">
-            <a href="#" class="footer-link" data-modal="disclaimer">Disclaimer</a>
-            <a href="#" class="footer-link" data-modal="privacy">Privacy Policy</a>
-            <a href="#" class="footer-link" data-modal="terms">Terms of Service</a>
-            <a href="#" class="footer-link" data-modal="about">About</a>
+            <button class="footer-link" data-modal="disclaimer">Disclaimer</button>
+            <button class="footer-link" data-modal="policy">Privacy Policy</button>
+            <button class="footer-link" data-modal="terms">Terms</button>
+            <button class="footer-link" data-modal="about">About</button>
         </div>
-        <p class="footer-copy">© 2025 DownReels. Not affiliated with Instagram.</p>
+        <p>© 2025 DownReels. Not affiliated with Instagram.</p>
     </footer>
 
-    <!-- ========== MODAL ========== -->
-    <div id="infoModal" class="modal-overlay">
-        <div class="modal-card">
+    <!-- Modals -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-card" id="modalCard">
             <button class="modal-close" id="modalClose">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
             </button>
             <div class="modal-content" id="modalContent"></div>
         </div>
     </div>
 
     <!-- Toast -->
-    <div id="toast" class="toast"><span id="toastMsg"></span><button class="toast-close" onclick="hideToast()">✕</button></div>
+    <div id="toast" class="toast">
+        <span id="toastMsg"></span>
+        <button class="toast-close" onclick="hideToast()">✕</button>
+    </div>
 
     <script src="assets/js/config.js"></script>
     <script src="assets/js/api.js"></script>
