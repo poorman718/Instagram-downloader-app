@@ -114,7 +114,7 @@ body.light .hero::before { background: rgba(255,255,255,0.9); }
 .url-input:focus { border-color: #d62976; }
 
 .btn-paste {
-    background: var(--ig-gradient); border:none; border-radius:50px;
+    background: var(--ig-gradient); border:none; border-radius:100px;
     padding:1rem 1.8rem; color:#fff; font-weight:700; font-size:1rem;
     cursor: pointer; display:flex; align-items:center; gap:0.5rem;
     white-space: nowrap; transition: transform 0.2s;
