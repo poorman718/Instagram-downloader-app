@@ -1,7 +1,7 @@
 (function() {
     'use strict';
 
-    // Theme Toggle
+    // Theme toggle
     const themeToggle = document.getElementById('themeToggle');
     if (themeToggle) {
         themeToggle.addEventListener('click', () => {
@@ -11,7 +11,7 @@
         if (localStorage.getItem('theme') === 'light') document.body.classList.add('light');
     }
 
-    // App Elements
+    // Elements
     const urlInput = document.getElementById('urlInput');
     const pasteBtn = document.getElementById('pasteBtn');
     const errorMsg = document.getElementById('errorMsg');
@@ -22,7 +22,7 @@
     if (!pasteBtn || !urlInput) return;
     let isFetching = false;
 
-    // Paste Button
+    // Paste button
     pasteBtn.addEventListener('click', async () => {
         if (isFetching) return;
         try {
@@ -39,7 +39,7 @@
         }
     });
 
-    // Manual Paste
+    // Manual paste
     urlInput.addEventListener('paste', () => {
         setTimeout(async () => {
             const url = urlInput.value.trim();
@@ -88,181 +88,52 @@
         }
     }
 
-    // ========== RENDER RESULTS ==========
     function renderResults(items) {
         resultsGrid.innerHTML = '';
-        
-        // Group all media into one card
+
+        // Use the first item for main display (could be video or photo)
+        const mainItem = items[0];
+        const isVideo = mainItem.type === 'video' || (mainItem.url && mainItem.url.includes('.mp4'));
+        const thumbnailUrl = mainItem.thumbnail || mainItem.url;
+        const videoUrl = isVideo ? mainItem.url : null;
+        const title = mainItem.title || 'Instagram Media';
+        const shortTitle = title.split(' ').slice(0, 6).join(' ') + (title.split(' ').length > 6 ? '...' : '');
+        const username = mainItem.username || '@instagram';
+
         const card = document.createElement('div');
         card.className = 'result-row';
         card.style.animation = 'fadeIn 0.3s both';
 
-        // Build preview container with switcher
-        const previewHTML = createMediaPreview(items);
-        const infoHTML = createMediaInfo(items);
-        const actionsHTML = createActions(items);
-
         card.innerHTML = `
-            <div class="result-preview-wrapper">
-                ${previewHTML}
+            <div class="result-preview">
+                ${isVideo ? 
+                    `<video class="preview-video" controls muted loop playsinline src="${videoUrl}"></video>` :
+                    `<img class="preview-img" src="${thumbnailUrl}" alt="media">`
+                }
+                ${mainItem.duration ? `<span class="duration-badge">${mainItem.duration}s</span>` : ''}
             </div>
             <div class="result-content">
-                ${infoHTML}
-                ${actionsHTML}
+                <h3 class="result-title" title="Click to copy">${shortTitle}</h3>
+                <div class="result-creator"><span class="creator-dot"></span>${username}</div>
+                <div class="result-meta">
+                    ${mainItem.likes ? `<span class="meta-tag">❤️ ${formatNum(mainItem.likes)}</span>` : ''}
+                    ${mainItem.views ? `<span class="meta-tag">👁 ${formatNum(mainItem.views)}</span>` : ''}
+                </div>
+                <div class="result-actions">
+                    <button class="btn-thumbnail" data-url="${thumbnailUrl}">📷 Thumbnail</button>
+                    ${videoUrl ? `<button class="btn-video" data-url="${videoUrl}">⬇ Video</button>` : ''}
+                    <button class="btn-new-link">+ New Link</button>
+                </div>
             </div>
         `;
 
         // Attach events
-        attachCardEvents(card, items);
-        resultsGrid.appendChild(card);
-    }
-
-    function createMediaPreview(items) {
-        if (items.length === 1) {
-            const item = items[0];
-            const isVideo = item.type === 'video' || (item.url && item.url.includes('.mp4'));
-            return `
-                <div class="preview-main" data-index="0">
-                    ${isVideo ? 
-                        `<video class="preview-video" controls muted loop playsinline src="${item.url}"></video>` :
-                        `<img class="preview-img" src="${item.thumbnail || item.url}" alt="media">`
-                    }
-                    ${item.duration ? `<span class="duration-badge">${item.duration}s</span>` : ''}
-                </div>
-            `;
-        }
-
-        // Multiple media – show first as main, and thumbnails below
-        let mainMedia = '';
-        const firstItem = items[0];
-        const isFirstVideo = firstItem.type === 'video' || (firstItem.url && firstItem.url.includes('.mp4'));
-        mainMedia = `
-            <div class="preview-main" data-index="0">
-                ${isFirstVideo ? 
-                    `<video class="preview-video" controls muted loop playsinline src="${firstItem.url}"></video>` :
-                    `<img class="preview-img" src="${firstItem.thumbnail || firstItem.url}" alt="media">`
-                }
-                ${firstItem.duration ? `<span class="duration-badge">${firstItem.duration}s</span>` : ''}
-            </div>
-        `;
-
-        let thumbnails = '<div class="preview-thumbs">';
-        items.forEach((item, i) => {
-            const isVideo = item.type === 'video' || (item.url && item.url.includes('.mp4'));
-            thumbnails += `
-                <div class="thumb-item ${i === 0 ? 'active' : ''}" data-index="${i}">
-                    ${isVideo ? 
-                        `<video class="thumb-video" muted src="${item.thumbnail || item.url}"></video>` :
-                        `<img class="thumb-img" src="${item.thumbnail || item.url}" alt="thumb">`
-                    }
-                </div>
-            `;
+        card.querySelector('.btn-thumbnail')?.addEventListener('click', function() {
+            downloadFile(this, thumbnailUrl, 'thumbnail_' + Date.now() + '.jpg');
         });
-        thumbnails += '</div>';
-
-        return mainMedia + thumbnails;
-    }
-
-    function createMediaInfo(items) {
-        // Use first item's caption/username, but show total count
-        const item = items[0];
-        const title = item.title || 'Instagram Media';
-        const shortTitle = title.split(' ').slice(0, 6).join(' ') + (title.split(' ').length > 6 ? '...' : '');
-        const username = item.username || '@instagram';
-        const total = items.length;
-
-        return `
-            <h3 class="result-title" title="Click to copy">${shortTitle}</h3>
-            <div class="result-creator"><span class="creator-dot"></span>${username}</div>
-            <div class="result-meta">
-                <span class="meta-tag">📸 ${total} media</span>
-                ${item.likes ? `<span class="meta-tag">❤️ ${formatNum(item.likes)}</span>` : ''}
-                ${item.views ? `<span class="meta-tag">👁 ${formatNum(item.views)}</span>` : ''}
-            </div>
-        `;
-    }
-
-    function createActions(items) {
-        // Show one download button per media item
-        let buttons = '';
-        if (items.length === 1) {
-            buttons = `<button class="btn-dl-row" data-index="0">⬇ Download</button>`;
-        } else {
-            buttons = items.map((_, i) => `<button class="btn-dl-row" data-index="${i}">⬇ Media ${i+1}</button>`).join('');
-        }
-        return `
-            <div class="result-actions">
-                ${buttons}
-                <button class="btn-new-link">+ New Link</button>
-            </div>
-        `;
-    }
-
-    function attachCardEvents(card, items) {
-        // Thumbnail click to switch main preview
-        const thumbs = card.querySelectorAll('.thumb-item');
-        const mainPreview = card.querySelector('.preview-main');
-        
-        thumbs.forEach(thumb => {
-            thumb.addEventListener('click', () => {
-                const index = parseInt(thumb.dataset.index);
-                // Update active state
-                card.querySelectorAll('.thumb-item').forEach(t => t.classList.remove('active'));
-                thumb.classList.add('active');
-                // Replace main preview content
-                const item = items[index];
-                const isVideo = item.type === 'video' || (item.url && item.url.includes('.mp4'));
-                mainPreview.innerHTML = `
-                    ${isVideo ? 
-                        `<video class="preview-video" controls muted loop playsinline src="${item.url}"></video>` :
-                        `<img class="preview-img" src="${item.thumbnail || item.url}" alt="media">`
-                    }
-                    ${item.duration ? `<span class="duration-badge">${item.duration}s</span>` : ''}
-                `;
-                mainPreview.dataset.index = index;
-            });
+        card.querySelector('.btn-video')?.addEventListener('click', function() {
+            downloadFile(this, videoUrl, 'video_' + Date.now() + '.mp4');
         });
-
-        // Download buttons
-        card.querySelectorAll('.btn-dl-row').forEach(btn => {
-            btn.addEventListener('click', async function(e) {
-                e.preventDefault();
-                const index = parseInt(this.dataset.index);
-                const item = items[index];
-                const url = item.url;
-                const isVideo = item.type === 'video' || (url && url.includes('.mp4'));
-                const ext = isVideo ? 'mp4' : 'jpg';
-                const filename = `instagram_${Date.now()}.${ext}`;
-
-                this.disabled = true;
-                this.innerHTML = '<span class="btn-spinner"></span>';
-
-                // Try direct fetch first
-                let downloaded = await tryDownload(url, filename);
-                if (!downloaded) {
-                    // Fallback: CORS proxy
-                    const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(url);
-                    downloaded = await tryDownload(proxyUrl, filename);
-                }
-                if (!downloaded) {
-                    // Last resort: anchor with download attribute (may open in same tab)
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = filename;
-                    a.target = '_self';
-                    a.click();
-                }
-
-                this.innerHTML = '✓ Done';
-                showToast('Download complete!', 'success');
-                setTimeout(() => {
-                    this.disabled = false;
-                    this.innerHTML = '⬇ Download';
-                }, 2000);
-            });
-        });
-
-        // New Link button
         card.querySelector('.btn-new-link').addEventListener('click', () => {
             document.body.classList.remove('results-active');
             results.style.display = 'none';
@@ -270,30 +141,70 @@
             errorMsg.textContent = '';
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
-
-        // Title copy
         card.querySelector('.result-title').addEventListener('click', async () => {
-            await navigator.clipboard.writeText(items[0].title);
+            await navigator.clipboard.writeText(title);
             showToast('Title copied!', 'success');
         });
+
+        resultsGrid.appendChild(card);
     }
 
-    async function tryDownload(url, filename) {
+    async function downloadFile(button, url, filename) {
+        button.disabled = true;
+        const originalText = button.innerHTML;
+        button.innerHTML = '<span class="btn-spinner"></span>';
+
+        // Try direct fetch
+        let success = false;
         try {
-            const response = await fetch(url, { mode: 'cors' });
-            if (!response.ok) return false;
-            const blob = await response.blob();
-            if (blob.size === 0) return false;
-            const blobUrl = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = blobUrl;
-            a.download = filename;
-            a.click();
-            setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
-            return true;
-        } catch (e) {
-            return false;
+            const res = await fetch(url, { mode: 'cors' });
+            if (res.ok) {
+                const blob = await res.blob();
+                if (blob.size > 0) {
+                    const blobUrl = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = blobUrl;
+                    a.download = filename;
+                    a.click();
+                    URL.revokeObjectURL(blobUrl);
+                    success = true;
+                }
+            }
+        } catch (e) { /* fallback */ }
+
+        // Fallback: cors proxy
+        if (!success) {
+            try {
+                const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(url);
+                const res = await fetch(proxyUrl);
+                if (res.ok) {
+                    const blob = await res.blob();
+                    const blobUrl = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = blobUrl;
+                    a.download = filename;
+                    a.click();
+                    URL.revokeObjectURL(blobUrl);
+                    success = true;
+                }
+            } catch (e) { /* final fallback */ }
         }
+
+        // Absolute last resort: anchor (same tab)
+        if (!success) {
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.target = '_self';
+            a.click();
+        }
+
+        button.innerHTML = '✓ Done';
+        showToast('Download complete!', 'success');
+        setTimeout(() => {
+            button.disabled = false;
+            button.innerHTML = originalText;
+        }, 2000);
     }
 
     function formatNum(n) {
@@ -304,7 +215,7 @@
         return n.toString();
     }
 
-    // FAQ
+    // FAQ toggle
     document.querySelectorAll('.faq-question').forEach(btn => {
         btn.addEventListener('click', () => btn.closest('.faq-item').classList.toggle('open'));
     });
@@ -322,7 +233,7 @@
     window.hideToast = () => document.getElementById('toast').classList.remove('show');
 })();
 
-// Animations
-const s = document.createElement('style');
-s.textContent = `@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}`;
-document.head.appendChild(s);
+// Animation
+const style = document.createElement('style');
+style.textContent = `@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}`;
+document.head.appendChild(style);
