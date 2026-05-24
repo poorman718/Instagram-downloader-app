@@ -259,6 +259,25 @@ body.results-active .features,
 body.results-active .faq { display:none !important; }
 body.results-active .hero { min-height:auto; padding:2rem 0; }
 
+/* ===== PARTICLE CANVAS ===== */
+#particleCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    pointer-events: none;  /* doesn't block clicks */
+    opacity: 0;            /* hidden by default */
+    transition: opacity 0.5s ease;
+}
+
+/* Only show particles in dark mode */
+[data-theme="dark"] #particleCanvas {
+    opacity: 1;
+}
+
+
 /* ========== RESPONSIVE ========== */
 @media (max-width: 768px) {
     .navbar-instagram { padding:0.8rem 1rem; }
