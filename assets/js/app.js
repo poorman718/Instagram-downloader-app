@@ -1,17 +1,19 @@
 (function() {
     'use strict';
 
-    // Theme toggle
+    // Theme Toggle
     const themeToggle = document.getElementById('themeToggle');
     if (themeToggle) {
         themeToggle.addEventListener('click', () => {
             document.body.classList.toggle('light');
             localStorage.setItem('theme', document.body.classList.contains('light') ? 'light' : 'dark');
         });
-        if (localStorage.getItem('theme') === 'light') document.body.classList.add('light');
+        const saved = localStorage.getItem('theme');
+        if (saved === 'light') document.body.classList.add('light');
+        else document.body.classList.remove('light');
     }
 
-    // Elements
+    // App Elements
     const urlInput = document.getElementById('urlInput');
     const pasteBtn = document.getElementById('pasteBtn');
     const errorMsg = document.getElementById('errorMsg');
@@ -20,9 +22,10 @@
     const resultsGrid = document.getElementById('resultsGrid');
 
     if (!pasteBtn || !urlInput) return;
+
     let isFetching = false;
 
-    // Paste button
+    // Paste Button
     pasteBtn.addEventListener('click', async () => {
         if (isFetching) return;
         try {
@@ -39,7 +42,7 @@
         }
     });
 
-    // Manual paste
+    // Manual Paste (Ctrl+V)
     urlInput.addEventListener('paste', () => {
         setTimeout(async () => {
             const url = urlInput.value.trim();
@@ -51,14 +54,21 @@
 
     // Enter key
     urlInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') { e.preventDefault(); startDownload(); }
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            startDownload();
+        }
     });
 
     async function startDownload() {
         const url = urlInput.value.trim();
-        if (!url) { errorMsg.textContent = 'Please enter a URL'; return; }
+        if (!url) {
+            errorMsg.textContent = 'Please enter a URL';
+            return;
+        }
         if (!url.includes('instagram.com') && !url.includes('instagr.am')) {
-            errorMsg.textContent = 'Invalid Instagram URL'; return;
+            errorMsg.textContent = 'Invalid Instagram URL';
+            return;
         }
         if (isFetching) return;
 
@@ -70,12 +80,14 @@
         urlInput.disabled = true;
 
         try {
-            const items = await fetchInstagramMedia(url);
-            if (!items || items.length === 0) throw new Error('No media found');
-            renderResults(items);
+            const data = await fetchInstagramMedia(url);
+            // Keep only video items
+            const videos = data.filter(item => item.type === 'video' || (item.url && item.url.includes('.mp4')));
+            if (videos.length === 0) throw new Error('No video found. This tool only downloads videos.');
+            renderResults(videos);
             results.style.display = 'block';
             document.body.classList.add('results-active');
-            showToast('Media ready!', 'success');
+            showToast(`${videos.length} video(s) ready!`, 'success');
             setTimeout(() => results.scrollIntoView({ behavior: 'smooth' }), 100);
         } catch (err) {
             errorMsg.textContent = err.message;
@@ -88,123 +100,130 @@
         }
     }
 
-    function renderResults(items) {
+    function renderResults(videos) {
         resultsGrid.innerHTML = '';
+        videos.forEach((item, i) => {
+            const card = document.createElement('div');
+            card.className = 'result-row';
+            card.style.animation = `fadeIn 0.3s ${i * 0.1}s both`;
 
-        // Use the first item for main display (could be video or photo)
-        const mainItem = items[0];
-        const isVideo = mainItem.type === 'video' || (mainItem.url && mainItem.url.includes('.mp4'));
-        const thumbnailUrl = mainItem.thumbnail || mainItem.url;
-        const videoUrl = isVideo ? mainItem.url : null;
-        const title = mainItem.title || 'Instagram Media';
-        const shortTitle = title.split(' ').slice(0, 6).join(' ') + (title.split(' ').length > 6 ? '...' : '');
-        const username = mainItem.username || '@instagram';
+            const title = item.title || 'Instagram Video';
+            const shortTitle = title.split(' ').slice(0, 6).join(' ') + (title.split(' ').length > 6 ? '...' : '');
+            const safeFilename = `${sanitize(title)}_${item.username || 'instagram'}.mp4`;
 
-        const card = document.createElement('div');
-        card.className = 'result-row';
-        card.style.animation = 'fadeIn 0.3s both';
+            card.innerHTML = `
+                <div class="result-preview">
+                    <video class="result-video" controls muted loop playsinline src="${item.url}"></video>
+                    ${item.duration ? `<span class="result-duration-badge">${item.duration}s</span>` : ''}
+                </div>
+                <div class="result-content">
+                    <div>
+                        <h3 class="result-title" title="Click to copy full title">${shortTitle}</h3>
+                        <div class="result-creator">
+                            <span class="creator-dot"></span>${item.username || '@instagram'}
+                        </div>
+                        <div class="result-meta">
+                            <span class="meta-tag">🎥 Video</span>
+                            ${item.likes ? `<span class="meta-tag">❤️ ${formatNum(item.likes)}</span>` : ''}
+                            ${item.views ? `<span class="meta-tag">👁 ${formatNum(item.views)}</span>` : ''}
+                        </div>
+                    </div>
+                    <div class="result-actions">
+                        <button class="btn-dl-row" data-url="${item.url}" data-filename="${safeFilename}">⬇ Download Video</button>
+                        <button class="btn-new-link">+ New Link</button>
+                    </div>
+                </div>
+            `;
 
-        card.innerHTML = `
-            <div class="result-preview">
-                ${isVideo ? 
-                    `<video class="preview-video" controls muted loop playsinline src="${videoUrl}"></video>` :
-                    `<img class="preview-img" src="${thumbnailUrl}" alt="media">`
+            // Download button – DIRECT, same tab, no popup
+            card.querySelector('.btn-dl-row').addEventListener('click', async function(e) {
+                e.stopPropagation();
+                const btn = this;
+                const videoUrl = btn.getAttribute('data-url');
+                const filename = btn.getAttribute('data-filename') || `instagram_video.mp4`;
+
+                btn.disabled = true;
+                btn.innerHTML = '<span class="btn-spinner"></span> Downloading…';
+
+                try {
+                    // Attempt direct blob download
+                    const downloaded = await downloadBlob(videoUrl, filename);
+                    if (downloaded) {
+                        btn.innerHTML = '✓ Downloaded';
+                        showToast('Download complete!', 'success');
+                    } else {
+                        // Fallback: anchor with download attribute
+                        triggerAnchorDownload(videoUrl, filename);
+                        btn.innerHTML = '✓ Downloaded';
+                        showToast('Download started', 'success');
+                    }
+                } catch (err) {
+                    // Last resort: anchor
+                    triggerAnchorDownload(videoUrl, filename);
+                    btn.innerHTML = '✓ Downloaded';
+                    showToast('Download started', 'success');
                 }
-                ${mainItem.duration ? `<span class="duration-badge">${mainItem.duration}s</span>` : ''}
-            </div>
-            <div class="result-content">
-                <h3 class="result-title" title="Click to copy">${shortTitle}</h3>
-                <div class="result-creator"><span class="creator-dot"></span>${username}</div>
-                <div class="result-meta">
-                    ${mainItem.likes ? `<span class="meta-tag">❤️ ${formatNum(mainItem.likes)}</span>` : ''}
-                    ${mainItem.views ? `<span class="meta-tag">👁 ${formatNum(mainItem.views)}</span>` : ''}
-                </div>
-                <div class="result-actions">
-                    <button class="btn-thumbnail" data-url="${thumbnailUrl}">📷 Thumbnail</button>
-                    ${videoUrl ? `<button class="btn-video" data-url="${videoUrl}">⬇ Video</button>` : ''}
-                    <button class="btn-new-link">+ New Link</button>
-                </div>
-            </div>
-        `;
 
-        // Attach events
-        card.querySelector('.btn-thumbnail')?.addEventListener('click', function() {
-            downloadFile(this, thumbnailUrl, 'thumbnail_' + Date.now() + '.jpg');
-        });
-        card.querySelector('.btn-video')?.addEventListener('click', function() {
-            downloadFile(this, videoUrl, 'video_' + Date.now() + '.mp4');
-        });
-        card.querySelector('.btn-new-link').addEventListener('click', () => {
-            document.body.classList.remove('results-active');
-            results.style.display = 'none';
-            urlInput.value = '';
-            errorMsg.textContent = '';
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
-        card.querySelector('.result-title').addEventListener('click', async () => {
-            await navigator.clipboard.writeText(title);
-            showToast('Title copied!', 'success');
-        });
+                setTimeout(() => {
+                    btn.disabled = false;
+                    btn.innerHTML = '⬇ Download Video';
+                }, 2500);
+            });
 
-        resultsGrid.appendChild(card);
+            // New Link button – reset everything
+            card.querySelector('.btn-new-link').addEventListener('click', () => {
+                document.body.classList.remove('results-active');
+                results.style.display = 'none';
+                urlInput.value = '';
+                errorMsg.textContent = '';
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+
+            // Click title to copy
+            card.querySelector('.result-title').addEventListener('click', async () => {
+                await navigator.clipboard.writeText(title);
+                showToast('Title copied!', 'success');
+            });
+
+            resultsGrid.appendChild(card);
+        });
     }
 
-    async function downloadFile(button, url, filename) {
-        button.disabled = true;
-        const originalText = button.innerHTML;
-        button.innerHTML = '<span class="btn-spinner"></span>';
-
-        // Try direct fetch
-        let success = false;
+    // Download as blob (direct)
+    async function downloadBlob(url, filename) {
         try {
-            const res = await fetch(url, { mode: 'cors' });
-            if (res.ok) {
-                const blob = await res.blob();
-                if (blob.size > 0) {
-                    const blobUrl = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = blobUrl;
-                    a.download = filename;
-                    a.click();
-                    URL.revokeObjectURL(blobUrl);
-                    success = true;
-                }
-            }
-        } catch (e) { /* fallback */ }
-
-        // Fallback: cors proxy
-        if (!success) {
-            try {
-                const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(url);
-                const res = await fetch(proxyUrl);
-                if (res.ok) {
-                    const blob = await res.blob();
-                    const blobUrl = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = blobUrl;
-                    a.download = filename;
-                    a.click();
-                    URL.revokeObjectURL(blobUrl);
-                    success = true;
-                }
-            } catch (e) { /* final fallback */ }
-        }
-
-        // Absolute last resort: anchor (same tab)
-        if (!success) {
+            const response = await fetch(url, { mode: 'cors' });
+            if (!response.ok) return false;
+            const blob = await response.blob();
+            if (blob.size === 0) return false;
+            const blobUrl = URL.createObjectURL(blob);
             const a = document.createElement('a');
-            a.href = url;
+            a.href = blobUrl;
             a.download = filename;
-            a.target = '_self';
+            a.style.display = 'none';
+            document.body.appendChild(a);
             a.click();
+            setTimeout(() => {
+                document.body.removeChild(a);
+                URL.revokeObjectURL(blobUrl);
+            }, 1000);
+            return true;
+        } catch (e) {
+            console.warn('Blob download failed, using fallback', e);
+            return false;
         }
+    }
 
-        button.innerHTML = '✓ Done';
-        showToast('Download complete!', 'success');
-        setTimeout(() => {
-            button.disabled = false;
-            button.innerHTML = originalText;
-        }, 2000);
+    // Fallback: anchor with download attribute (same tab)
+    function triggerAnchorDownload(url, filename) {
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        a.target = '_self';
+        a.style.display = 'none';
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => document.body.removeChild(a), 500);
     }
 
     function formatNum(n) {
@@ -215,25 +234,34 @@
         return n.toString();
     }
 
+    function sanitize(str) {
+        return (str || 'video').replace(/[^a-z0-9\s]/gi, '').replace(/\s+/g, '_').substring(0, 40);
+    }
+
     // FAQ toggle
     document.querySelectorAll('.faq-question').forEach(btn => {
         btn.addEventListener('click', () => btn.closest('.faq-item').classList.toggle('open'));
     });
 
-    // Toast
+    // Toast notification
     window.showToast = function(msg, type = 'success') {
         const t = document.getElementById('toast');
         const tm = document.getElementById('toastMsg');
+        if (!t || !tm) return;
         tm.textContent = msg;
         t.className = 'toast show';
-        t.style.borderLeftColor = type === 'error' ? '#ed4956' : type === 'info' ? '#0095f6' : '#78de45';
+        t.style.borderLeft = type === 'error' ? '4px solid #ed4956' : type === 'info' ? '4px solid #0095f6' : '4px solid #78de45';
         clearTimeout(t._t);
         t._t = setTimeout(() => t.classList.remove('show'), 3500);
     };
-    window.hideToast = () => document.getElementById('toast').classList.remove('show');
+    window.hideToast = function() {
+        const t = document.getElementById('toast');
+        if (t) t.classList.remove('show');
+    };
+
 })();
 
-// Animation
-const style = document.createElement('style');
-style.textContent = `@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}`;
-document.head.appendChild(style);
+// Add animation
+const animStyle = document.createElement('style');
+animStyle.textContent = `@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}`;
+document.head.appendChild(animStyle);
