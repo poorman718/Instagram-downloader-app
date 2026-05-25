@@ -172,7 +172,7 @@ body.light .hero::before { background: rgba(255,255,255,0.9); }
 }
 .result-row:hover { transform:translateY(-2px); }
 .result-preview {
-    width: 880px;           /* 👈 thoda bada preview */
+    width: 380px;           /* 👈 thoda bada preview */
     height: 240px;
     border-radius:12px; overflow:hidden;
     background:var(--bg-secondary); flex-shrink:0; position:relative;
